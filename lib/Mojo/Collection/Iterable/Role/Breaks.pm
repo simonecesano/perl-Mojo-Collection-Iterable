@@ -3,17 +3,7 @@ package Mojo::Collection::Iterable::Role::Breaks;
 use Mojo::Util qw/dumper/;
 use Mojo::Base -role;
 
-# use Mojo::Collection;
-# use Class::Method::Modifiers;
-# use Statistics::Descriptive;
 use Want;
-
-# use Data::Dumper;
-# use List::Util;
-
-# sub sum { return List::Util::sum (shift()->collection->@*) }
-
-# sub deparse { Data::Dumper->new([@_])->Indent(1)->Sortkeys(1)->Terse(1)->Useqq(1)->Deparse(1)->Dump }
 
 has "breaks" => "0";
 has "breakpoints" => sub { [] };
@@ -29,20 +19,19 @@ sub check_break {
     my ($when, $id, @subs) = @_;
     @subs = grep { ref $_ eq "CODE" } @subs;
 
-    # final after
+    # break-after after last row: always true
     if ($when eq "after" && $self->idx >= ($self->size - 1)) {
 	return 1;
     }
-
-    # intermediate after
+    # break-after on intermediate row: check
     elsif ($when eq "after" && $self->idx >= 1 && _is_break($self->curr, $self->next, @subs)) {
 	return 1;
     }
-    # first before
+    # break-before before first row: always true
     elsif ($when eq "before" && $self->idx < 1) {
 	return 1;
     }
-    # intermediate before
+    # break-before on intermediate row: check
     elsif ($when eq "before" && _is_break($self->curr, $self->prev, @subs)) {
 	return 1;
     }
@@ -64,7 +53,6 @@ sub break {
 	:
 	$self->create_break(@_)
 }
-
 
 =head2 break
 
